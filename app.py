@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 
 app = Flask(__name__)
+
+# Load the model pipeline (make sure it includes preprocessing inside the pipeline)
 model = pickle.load(open("vehicle_price_prediction.pkl", "rb"))
 
 @app.route("/")
@@ -30,16 +32,26 @@ def predict():
             "vehicle_age": int(request.form["vehicle_age"]),
         }
 
-        # Convert to DataFrame for model prediction (adjust columns if needed)
+        # Convert to DataFrame
         df = pd.DataFrame([input_data])
 
-        # TODO: Preprocessing like encoding must match your model pipeline
+        # Model should include preprocessing steps (like LabelEncoding, OneHotEncoding, scaling, etc.)
+        # If not, you need to replicate preprocessing steps here
+
+        # Predict
         prediction = model.predict(df)[0]
         output = round(prediction, 2)
 
         return render_template("index.html", prediction_text=f"Estimated Vehicle Price: ₹ {output}")
+    
+    except ValueError as ve:
+        return render_template("index.html", prediction_text=f"Input Error: {ve}")
+    
+    except KeyError as ke:
+        return render_template("index.html", prediction_text=f"Missing Input Field: {ke}")
+    
     except Exception as e:
-        return f"An error occurred: {e}"
+        return render_template("index.html", prediction_text=f"An unexpected error occurred: {e}")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
