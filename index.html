@@ -29,6 +29,11 @@
       text-align: center;
       margin-bottom: 25px;
     }
+    h3 {
+      text-align: center;
+      margin-top: 20px;
+      color: #00ffcc;
+    }
     label {
       display: block;
       margin-top: 15px;
@@ -67,6 +72,11 @@
 <body>
   <div class="container" role="main">
     <h2>Vehicle Price Predictor</h2>
+
+    {% if prediction_text %}
+      <h3>{{ prediction_text }}</h3>
+    {% endif %}
+
     <form action="/predict" method="POST">
       <label for="make">Make</label>
       <input type="text" id="make" name="make" placeholder="e.g., Toyota" required />
